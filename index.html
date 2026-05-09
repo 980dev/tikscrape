@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <title>980 TIKSCRAPE PRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #000000;
+            --accent: #7C3AED;
+            --accent-glow: rgba(124, 58, 237, 0.4);
+            --card-bg: rgba(15, 15, 23, 0.7);
+            --border: rgba(255, 255, 255, 0.05);
+            --text: #F3F4F6;
+            --text-dim: #9CA3AF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: radial-gradient(circle at top right, #0d0a1a, #000); 
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        nav {
+            width: 80px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            gap: 30px;
+        }
+        .nav-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .nav-icon.active { background: var(--accent); color: white; box-shadow: 0 0 20px var(--accent-glow); }
+        .nav-icon:hover:not(.active) { color: white; background: rgba(255,255,255,0.05); }
+
+        main { flex: 1; display: none; flex-direction: column; padding: 40px; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .header-title { font-size: 14px; font-weight: 800; letter-spacing: 4px; color: var(--text-dim); }
+
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent); padding: 2px; }
+
+        .content { display: grid; grid-template-columns: 380px 1fr; gap: 40px; }
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+        }
+        h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 25px; }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+        input[type="text"] {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 14px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+            transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: var(--accent); background: rgba(124, 58, 237, 0.05); }
+        .btn-search {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-search:hover { transform: translateY(-50%) scale(1.05); box-shadow: 0 0 15px var(--accent-glow); }
+
+        .target-preview {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .target-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--accent); margin-bottom: 15px; }
+        .target-name { font-weight: 800; font-size: 18px; margin-bottom: 5px; }
+        .target-bio { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+
+        .cb-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 12px;
+            transition: 0.2s;
+            background: rgba(255,255,255,0.02);
+        }
+        .cb-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        input[type="checkbox"] { accent-color: var(--accent); width: 18px; height: 18px; }
+
+        .btn-main {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
+        }
+        .btn-main:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 25px var(--accent-glow); }
+        .btn-main:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+        }
+        .stat-value { font-size: 36px; font-weight: 800; color: white; }
+        .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; margin-top: 5px; }
+
+        .btn-stop-minimal {
+            background: transparent;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 6px 15px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            opacity: 0.6;
+        }
+        .btn-stop-minimal:hover { background: rgba(255, 68, 68, 0.1); opacity: 1; }
+
+        .log-terminal {
+            height: 380px; 
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+        .log-entry { margin-bottom: 8px; line-height: 1.4; border-left: 2px solid var(--border); padding-left: 12px; }
+        .log-time { color: var(--accent); margin-right: 10px; font-weight: 800; }
+        .log-msg.success { color: #10B981; }
+        .log-msg.error { color: #EF4444; }
+
+        #login-overlay {
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .login-section { width: 100%; max-width: 400px; padding: 40px; }
+        .system-badges { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .badge { font-size: 9px; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-dim); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        .splash-logo { width: 120px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
+        .boot-text {
+            margin-top: 30px; font-size: 10px; letter-spacing: 8px; color: #ffffff; 
+            text-transform: uppercase; font-weight: 400; opacity: 0;
+            animation: fadeIn 0.5s forwards 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div id="splash-screen">
+        <img src="/logo.png" class="splash-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3955/3955024.png'">
+        <div class="boot-text">Click to Unlock</div>
+    </div>
+    <div id="login-overlay">
+        <div class="login-section">
+            <div class="system-badges">
+                <span class="badge">Mobile API v1</span>
+                <span class="badge">Shadow-Bypass</span>
+                <span class="badge">Raw Resolution</span>
+            </div>
+            <img src="/logo.png" class="login-logo" style="width: 100px; margin-bottom: 30px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3955/3955024.png'">
+            <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                <button class="btn-main" id="btn-login" style="padding: 12px 30px; font-size: 10px; border-radius: 12px; letter-spacing: 2px;">AVVIO SESSIONE LOGIN</button>
+            </div>
+            <p id="login-status" style="margin-top: 30px; font-size: 11px; color: var(--accent); font-weight: 800; letter-spacing: 1px;"></p>
+        </div>
+    </div>
+
+    <nav id="sidebar">
+        <img src="/logo.png" style="width: 28px; margin-top: 10px; margin-bottom: 10px;">
+        <div class="nav-icon active"><i data-lucide="layout-dashboard"></i></div>
+        <div style="flex: 1;"></div>
+        <div class="nav-icon" id="btn-logout" style="color: #EF4444;"><i data-lucide="log-out"></i></div>
+    </nav>
+
+    <main id="main-ui">
+        <header>
+            <div class="header-title">COMMAND CENTER PRO</div>
+            <div class="user-info">
+                <div style="text-align: right;">
+                    <p id="user-name" style="font-size: 13px; font-weight: 800;">@username</p>
+                    <p style="font-size: 9px; color: #10B981; font-weight: 800;">• ONLINE</p>
+                </div>
+                <img id="user-avatar" class="avatar" src="">
+            </div>
+        </header>
+
+        <div class="content">
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="card">
+                    <h2>Ricerca Target</h2>
+                    <div class="input-group">
+                        <input type="text" id="target-user" placeholder="Username TikTok...">
+                        <button class="btn-search" id="btn-search"><i data-lucide="search" size="16"></i></button>
+                    </div>
+                    <div class="target-preview" id="target-preview">
+                        <img id="target-avatar" class="target-avatar">
+                        <p id="target-name" class="target-name"></p>
+                        <p id="target-bio" class="target-bio"></p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>Opzioni Estrazione</h2>
+                    <label class="cb-item"><input type="checkbox" id="chk-posts" checked> Scarica Immagini Post</label>
+                    <label class="cb-item"><input type="checkbox" id="chk-vids" checked> Scarica Video Post</label>
+                    <button class="btn-main" id="btn-start" style="margin-top: 20px;" disabled>LANCIA SCRAPING</button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="stat-card">
+                        <p class="stat-value" id="stat-count">0</p>
+                        <p class="stat-label">Post Analizzati</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-value" id="stat-engine" style="color: #10B981; font-size: 20px; padding-top: 10px;">IDLE</p>
+                        <p class="stat-label">Stato Motore</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0;">Terminale di Log</h2>
+                        <button id="btn-stop" class="btn-stop-minimal" style="display: none;"><i data-lucide="square" size="11"></i> STOP ENGINE</button>
+                    </div>
+                    <div class="log-terminal" id="log-terminal"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        const $ = id => document.getElementById(id);
+        let isTargetSet = false;
+        let isAuthDone = false;
+        let lastLogId = 0;
+        
+        const startupSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-tech-break-2954.mp3');
+        
+        function runSplash() {
+            startupSound.play().catch(() => {});
+            setTimeout(() => {
+                const splash = $('splash-screen');
+                splash.style.transform = 'translateY(-100%)';
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 200);
+            }, 300);
+        }
+        
+        window.addEventListener('mousedown', () => { if(!$('splash-screen')) return; runSplash(); }, {once: true});
+        window.addEventListener('keydown', () => { if(!$('splash-screen')) return; runSplash(); }, {once: true});
+
+        async function checkInitialStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                if(data.user) unlockUI(data);
+            } catch(e) {}
+        }
+        checkInitialStatus();
+
+        $('btn-login').onclick = async () => {
+            $('btn-login').disabled = true;
+            $('login-status').innerText = "AVVIO SESSIONE LOGIN...";
+            await fetch('/api/login', {method: 'POST'});
+        };
+
+        async function syncBrowser(browser) {
+            $('login-status').innerText = `SINCRONIZZAZIONE ${browser.toUpperCase()}...`;
+            await fetch('/api/sync_browser', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({browser})
+            });
+        }
+
+        $('btn-logout').onclick = async () => {
+            if(!confirm("Sicuro di voler chiudere la sessione?")) return;
+            await fetch('/api/logout', {method: 'POST'});
+            location.reload();
+        };
+
+        function unlockUI(data) {
+            isAuthDone = true;
+            $('sidebar').style.display = 'flex';
+            $('main-ui').style.display = 'flex';
+            $('login-overlay').style.display = 'none';
+            $('user-name').innerText = '@' + data.user;
+            if(data.avatar) $('user-avatar').src = `/api/proxy_image?url=${encodeURIComponent(data.avatar)}`;
+            setInterval(updateStatus, 1000);
+        }
+
+        function appendLocalLog(msg, type="info", customTime=null) {
+            const term = $('log-terminal');
+            const time = customTime || new Date().toLocaleTimeString('it-IT');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">${time}</span><span class="log-msg ${type}">${msg}</span>`;
+            term.appendChild(entry);
+            term.scrollTop = term.scrollHeight;
+        }
+
+        async function updateStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                
+                if(data.user && !isAuthDone) unlockUI(data);
+                
+                if(isAuthDone) {
+                    $('stat-count').innerText = data.post_count;
+                    $('stat-engine').innerText = data.is_running ? "RUNNING" : "IDLE";
+                    $('stat-engine').style.color = data.is_running ? "var(--accent)" : "#10B981";
+                    $('btn-start').disabled = data.is_running || !isTargetSet;
+                    $('btn-stop').style.display = data.is_running ? 'flex' : 'none';
+                    
+                    // Sistema Ibrido: ID se presenti, altrimenti fallback lunghezza
+                    const hasIds = data.logs.length > 0 && data.logs[0].id !== undefined;
+                    
+                    if (hasIds) {
+                        data.logs.forEach(l => {
+                            if (l.id > lastLogId) {
+                                appendLocalLog(l.msg, l.type, l.time);
+                                lastLogId = l.id;
+                            }
+                        });
+                    } else if (data.logs.length > lastLogId) {
+                        // Fallback: se lastLogId è ancora 0 o piccolo, trattalo come indice
+                        for (let i = lastLogId; i < data.logs.length; i++) {
+                            appendLocalLog(data.logs[i].msg, data.logs[i].type, data.logs[i].time);
+                        }
+                        lastLogId = data.logs.length;
+                    }
+                }
+            } catch(e) {}
+        }
+
+        $('btn-search').onclick = async () => {
+            const username = $('target-user').value.trim();
+            if(!username) return;
+            
+            // Feedback ISTANTANEO nel terminale
+            appendLocalLog(`Analisi @${username}...`, "info");
+            $('btn-search').disabled = true;
+            
+            try {
+                const res = await fetch('/api/set_target', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username})
+                });
+                const data = await res.json();
+                if(data.status === 'ok') {
+                    $('target-avatar').src = `/api/proxy_image?url=${encodeURIComponent(data.target.avatar)}`;
+                    $('target-preview').style.display = 'block';
+                    $('target-name').innerText = '@' + data.target.name;
+                    $('target-bio').innerText = data.target.bio;
+                    isTargetSet = true;
+                }
+            } finally { $('btn-search').disabled = false; }
+        };
+
+        $('btn-start').onclick = async () => {
+            const options = {
+                posts: $('chk-posts').checked,
+                videos: $('chk-vids').checked
+            };
+            await fetch('/api/start', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(options)
+            });
+        };
+
+        $('btn-stop').onclick = async () => {
+            if(!confirm("Vuoi davvero fermare lo scraping?")) return;
+            await fetch('/api/stop', {method: 'POST'});
+        };
+    </script>
+</body>
+</html>
