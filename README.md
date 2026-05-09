@@ -65,5 +65,5 @@ This tool is for research and data analysis purposes only. The author is not res
 ![Dashboard](screenshots/dashboard.png)
 
 ---
-*Developed with 💜 for GitHub.*
+*Developed with 💜 for the GitHub Community.*
 
