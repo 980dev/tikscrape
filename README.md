@@ -65,5 +65,5 @@ This tool is for research and data analysis purposes only. The author is not res
 ![Dashboard](screenshots/dashboard.png)
 
 ---
-*Developed with 💜 by 980 Labs.*
+*Developed with 💜 for GitHub.*
 
